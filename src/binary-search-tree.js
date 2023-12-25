@@ -14,7 +14,7 @@ class BinarySearchTree {
   }
 
   add(data) {
-    if (!this.tree?.data) {
+    if (!this.tree) {
       this.tree = new Node(data);
       return;
     }
@@ -64,25 +64,89 @@ class BinarySearchTree {
   }
 
   remove(data) {
-    // let current = this.tree;
-    // let prev = null;
+    let current = this.tree;
+    let prev = null;
 
-    // while(current) {
-    //   if (current.data === data) {
-         
-    //   }
-      
-    // }
+    while (current) {
+      // если текущий нод, тот который надо удалить
+      if (current.data === data) {
+        // если у нода нет детей
+        if (!current.left && !current.right) {
+          if (!prev) this.tree = null;
+          else prev.left === current ? (prev.left = null) : (prev.right = null);
+          break;
+        }
+
+        // если у нода один ребенок
+        if (!current.left) {
+          if (!prev) this.tree = current.right;
+          else
+            prev.left === current
+              ? (prev.left = current.right)
+              : (prev.right = current.right);
+          break;
+        }
+        if (!current.right) {
+          if (!prev) this.tree = current.left;
+          else
+            prev.left === current
+              ? (prev.left = current.left)
+              : (prev.right = current.left);
+          break;
+        }
+
+        // если у нода два ребенка
+        if (!current.right.left) {
+          if (!prev) {
+            this.tree.data = current.right.data;
+            this.tree.right = current.right.right;
+          } else {
+            if (prev.left === current) {
+              prev.left.data = current.right.data;
+              prev.left.right = current.right.right;
+            } else {
+              prev.right.data = current.right.data;
+              prev.right.right = current.right.right;
+            }
+          }
+          break;
+        }
+        let minNode = current.right.left;
+        let prevMinNode = current.right;
+        while (minNode.left) {
+          prevMinNode = minNode;
+          minNode = minNode.left;
+        }
+        current.data = minNode.data;
+        prevMinNode.left = minNode.right || null;
+        break;
+      }
+
+      // если текущий нод не тот
+      prev = current;
+      if (current.data > data) current = current.left;
+      else current = current.right;
+    }
   }
 
   min() {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
+    if (!tree) return null;
+
+    let current = this.tree;
+    while (current.left) {
+      current = current.left;
+    }
+    return current.data;
   }
 
   max() {
-    throw new NotImplementedError("Not implemented");
-    // remove line with error and write your code here
+    if (!tree) return null;
+
+    let current = this.tree;
+    while (current.right) {
+      current = current.right;
+    }
+    return current.data;
   }
 }
 
@@ -90,7 +154,7 @@ module.exports = {
   BinarySearchTree,
 };
 
-// const tree = new BinarySearchTree();
+const tree = new BinarySearchTree();
 
 // tree.add(9);
 // tree.add(14);
@@ -122,3 +186,25 @@ module.exports = {
 // console.log(tree.find(2));
 // console.log(tree.find(32));
 // console.log(tree.find(14));
+
+tree.add(9);
+tree.add(14);
+tree.add(2);
+tree.add(6);
+tree.add(128);
+tree.add(8);
+tree.add(31);
+tree.add(54);
+tree.add(1);
+tree.remove(14);
+tree.remove(8);
+tree.remove(9);
+console.log(tree.has(14));
+console.log(tree.has(8));
+console.log(tree.has(9));
+console.log(tree.has(2));
+console.log(tree.has(6));
+console.log(tree.has(128));
+console.log(tree.has(31));
+console.log(tree.has(54));
+console.log(tree.has(1));
